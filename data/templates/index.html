@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Durum Etiketi Ekleme</title>
+</head>
+<body style="background-color: black ; color: aliceblue;">
+    <h1>JSON Veri Düzenleyici (0 : Olumlu , 1-10:Olumsuz Puanı)</h1>    
+    <div id="content"></div>
+
+    <script>
+        const data = {{ data|tojson }};
+        
+        const contentDiv = document.getElementById('content');
+        
+        data.forEach(item => {
+            const container = document.createElement('div');
+            container.style.border = "1px solid aliceblue";
+            container.style.padding = "10px";
+            container.style.margin = "10px";
+
+            container.innerHTML = `
+                <p><strong>ID:</strong> ${item.ID}</p>
+                <p><strong>Title:</strong> ${item.Title}</p>
+                <p><strong>Body:</strong> ${item.Body}</p>
+                <p><strong>Durum:</strong> ${item.Durum || 'Henüz Puanlanmadı'}</p>
+                <label for="durum-${item.ID}">Durum Giriniz (0-10): </label>
+                <input type="number" id="durum-${item.ID}" min="0" max="10">
+                <button onclick="updateDurum(${item.ID})">Kaydet</button>
+            `;
+            contentDiv.appendChild(container);
+        });
+
+        function updateDurum(id) {
+            const input = document.getElementById(`durum-${id}`);
+            const durum = input.value;
+
+            fetch('/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ID: id, Durum: durum })
+            }).then(response => response.json())
+              .then(data => alert(data.message));
+        }
+    </script>
+</body>
+</html>
