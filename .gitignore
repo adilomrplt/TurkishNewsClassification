@@ -32,8 +32,7 @@ ENV/
 *.swo
 
 # Project specific
-models/*.pkl
-data/*.json
+
 *.log
 
 # Jupyter Notebook
